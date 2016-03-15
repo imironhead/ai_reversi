@@ -255,14 +255,12 @@ bool ReversiState::IsValidMoveAt(int32_t x, int32_t y, Player c) const {
     u = x + du;
     v = y + dv;
 
-    if (!(this->*fn_is_diff)(u, v)) { continue; }
-
-    while (true) {
+    while ((this->*fn_is_diff)(u, v)) {
       u += du;
       v += dv;
 
       if (ReversiState::IsInvalidPosition(u, v)) { break; }
-
+      if (this->IsEmptyAt(u, v)) { break; }
       if ((this->*fn_is_same)(u, v)) { return true; }
     }
   }
@@ -322,13 +320,12 @@ void ReversiState::MoveAt(int32_t x, int32_t y) {
       u = x + du;
       v = y + dv;
 
-      if (!(this->*fn_is_diff)(u, v)) { continue; }
-
-      while (true) {
+      while ((this->*fn_is_diff)(u, v)) {
         u += du;
         v += dv;
 
         if (ReversiState::IsInvalidPosition(u, v)) { break; }
+        if (this->IsEmptyAt(u, v)) { break; }
 
         if ((this->*fn_is_same)(u, v)) {
           while (true) {

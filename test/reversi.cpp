@@ -373,3 +373,48 @@ TEST_CASE("ReversiState Simulate", "[ReversiState]") {
     REQUIRE(winner == ReversiState::Player::kDraw);
   }
 }
+
+TEST_CASE("ReversiState Bugs", "[ReversiState]") {
+  SECTION("IsValidMoveAt Bug") {
+    shared_ptr<ReversiState> state(new ReversiState(
+      "        "
+      "        "
+      "        "
+      "       x"
+      "        "
+      "        "
+      "       o"
+      "        ",
+      ReversiState::Player::kBlack));
+
+    REQUIRE_FALSE(state->IsValidMoveAt(7, 7, ReversiState::Player::kBlack));
+  }
+
+  SECTION("MoveAt Bug") {
+    shared_ptr<ReversiState> state_source(new ReversiState(
+      "        "
+      "   x    "
+      "   xoo  "
+      "   xoooo"
+      "  xxxo  "
+      "    x o "
+      "   x    "
+      "  x     ",
+      ReversiState::Player::kWhite));
+
+    shared_ptr<ReversiState> state_target(new ReversiState(
+      "        "
+      "   x    "
+      "   xoo  "
+      "   xoooo"
+      "  xxoo  "
+      "   ox o "
+      "   x    "
+      "  x     ",
+      ReversiState::Player::kBlack));
+
+    state_source->MoveAt(3, 5);
+
+    REQUIRE(*state_source == *state_target);
+  }
+}
