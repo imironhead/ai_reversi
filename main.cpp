@@ -66,12 +66,12 @@ int main() {
       switch (game_state->Winner()) {
         case ReversiState::Player::kBlack: {
           cout << "   - Winner: \u25cf -\n";
-          cout << "     <(^_^)@\n\n";
+          cout << "     <(/_\\)>\n\n";
         } break;
 
         case ReversiState::Player::kWhite: {
           cout << "   - Winner: \u25cb -\n";
-          cout << "     <(/_\\)>\n\n";
+          cout << "     <(^_^)@\n\n";
         } break;
 
         default: {
