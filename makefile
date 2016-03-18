@@ -1,9 +1,9 @@
-.PHONY: test
+.PHONY: test reversi
 
 test :
-	g++ -std=c++11 reversi.cpp state.cpp uct.cpp ./test/*.cpp
+	g++ -std=c++11 ./test/*.cpp ./reversi/*.cpp ./uct/*.cpp
 	./a.out
 
-run :
-	g++ -std=c++11 *.cpp
+reversi :
+	g++ -std=c++11 ./game/reversi_game.cpp ./reversi/*.cpp ./uct/*.cpp
 	./a.out

@@ -4,7 +4,7 @@
 
 #include <cstdint>
 #include <vector>
-#include "state.hpp"
+#include "../uct/state.hpp"
 
 class ReversiState : public State {
  public:

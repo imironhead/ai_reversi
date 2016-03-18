@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "./catch/include/catch.hpp"
-#include "../reversi.hpp"
+#include "../reversi/reversi.hpp"
 
 using std::dynamic_pointer_cast;
 using std::shared_ptr;

@@ -3,8 +3,8 @@
 #include <memory>
 #include <string>
 
-#include "reversi.hpp"
-#include "uct.hpp"
+#include "../reversi/reversi.hpp"
+#include "../uct/uct.hpp"
 
 using std::cin;
 using std::cout;
@@ -60,9 +60,9 @@ int main() {
       game_state = temp_state;
     }
 
-    if (game_state->IsNormal()) {
-      game_state->Inspect();
-    } else {
+    game_state->Inspect();
+
+    if (game_state->IsEnd()) {
       switch (game_state->Winner()) {
         case ReversiState::Player::kBlack: {
           cout << "   - Winner: \u25cf -\n";
