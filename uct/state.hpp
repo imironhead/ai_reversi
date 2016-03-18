@@ -22,6 +22,7 @@ class State {
   virtual int32_t Simulate();
   virtual void Backpropagate(int32_t winner);
   virtual void Inspect() const;
+  virtual void InspectValue() const;
 
  protected:
   Type                type_;

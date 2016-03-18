@@ -1,4 +1,5 @@
 // Copyright 2016 iRonhead
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
@@ -11,9 +12,11 @@
 using std::cout;
 using std::dynamic_pointer_cast;
 using std::endl;
+using std::max_element;
 using std::log;
 using std::rand;
 using std::shared_ptr;
+using std::sort;
 using std::sqrt;
 using std::string;
 using std::vector;
@@ -205,6 +208,100 @@ void ReversiState::Inspect() const {
   cout << "  \u25cf: " << this->BlacksCount();
   cout << "  \u25cb: " << this->WhitesCount();
   cout << endl;
+}
+
+//------------------------------------------------------------------------------
+void ReversiState::InspectValue() const {
+  auto moves = this->EnumValidMoves(this->player_);
+
+  sort(
+    moves.begin(),
+    moves.end(),
+    [](const ReversiState::Move& a, const ReversiState::Move& b) {
+      return a.y == b.y ? a.x <= b.x : a.y < b.y;
+    });
+
+  const auto blacks = this->blacks_;
+  const auto whites = this->whites_;
+
+  auto move = moves.begin();
+  auto f = 1ull;
+
+  cout << "   0 1 2 3 4 5 6 7 " << endl;
+  cout << "  \u250c\u2500\u252c\u2500\u252c\u2500\u252c\u2500\u252c\u2500\u252c"
+          "\u2500\u252c\u2500\u252c\u2500\u2510" << endl;
+
+  for (auto y = 0; y < 8; ++y) {
+    cout << static_cast<char>('A' + y) << " \u2502";
+
+    for (auto x = 0; x < 8; ++x) {
+      if ((blacks & f) != 0) {
+        cout << "\u25cf\u2502";
+      } else if ((whites & f) != 0) {
+        cout << "\u25cb\u2502";
+      } else {
+        if (move != moves.end() && move->x == x && move->y == y) {
+          ++move;
+          cout << "\033[1;31m*\033[0m\u2502";
+        } else {
+          cout << " \u2502";
+        }
+      }
+
+      f <<= 1;
+    }
+
+    cout << endl;
+
+    if (y < 7) {
+      cout << "  \u251c\u2500\u253c\u2500\u253c\u2500\u253c\u2500\u253c\u2500"
+              "\u253c\u2500\u253c\u2500\u253c\u2500\u2524" << endl;
+    } else {
+      cout << "  \u2514\u2500\u2534\u2500\u2534\u2500\u2534\u2500\u2534\u2500"
+              "\u2534\u2500\u2534\u2500\u2534\u2500\u2518" << endl;
+    }
+  }
+
+  cout << "  \u25cf: " << this->BlacksCount();
+  cout << "  \u25cb: " << this->WhitesCount();
+  cout << endl;
+
+  auto visited_max = max_element(
+    this->children_.begin(),
+    this->children_.end(),
+    [](const State* s, const State* t) {
+      auto a = dynamic_cast<const ReversiState*>(s);
+      auto b = dynamic_cast<const ReversiState*>(t);
+      return a->count_visits_ < b->count_visits_;
+    });
+
+  auto value_max = max_element(
+    this->children_.begin(),
+    this->children_.end(),
+    [](const State* s, const State* t) {
+      auto a = dynamic_cast<const ReversiState*>(s);
+      auto b = dynamic_cast<const ReversiState*>(t);
+      return a->value_ < b->value_;
+    });
+
+  for (auto temp : this->children_) {
+    auto child = dynamic_cast<ReversiState*>(temp);
+
+    cout << endl;
+
+    if (child == *visited_max) {
+      cout << "\033[1;31m";
+    } else if (child == *value_max) {
+      cout << "\033[1;36m";
+    } else {
+      cout << "\033[37m";
+    }
+
+    cout << "visits: " << child->count_visits_ << endl;
+    cout << "value:  " << child->value_ << endl;
+
+    cout << "\033[0m";
+  }
 }
 
 //------------------------------------------------------------------------------

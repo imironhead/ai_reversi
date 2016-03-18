@@ -10,6 +10,7 @@ class UpperConfidenceTree {
   explicit UpperConfidenceTree(int32_t count_round);
 
   State* Search(State* root) const;
+  State* SearchDemo(State* root) const;
 
  private:
   int32_t count_round_;

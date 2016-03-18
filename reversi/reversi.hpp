@@ -58,6 +58,7 @@ class ReversiState : public State {
   int32_t Simulate() override;
   void Backpropagate(int32_t winner) override;
   void Inspect() const override;
+  void InspectValue() const override;
 
   // Compare 2 ReversiStates with their stones and current player.
   bool operator==(const ReversiState& that) const;
