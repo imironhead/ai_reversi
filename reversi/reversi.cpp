@@ -157,12 +157,18 @@ void ReversiState::Backpropagate(int32_t winner) {
   if (this->parent_ != nullptr) {
     auto parent = dynamic_cast<ReversiState*>(this->parent_);
 
-    float exploitation = this->count_wins_ / this->count_visits_;
+    for (auto child : parent->children_) {
+      auto the_child = dynamic_cast<ReversiState*>(child);
 
-    float exploration = sqrt(
-      2.0f * log(parent->count_visits_ + 1.0f) / this->count_visits_);
+      if (the_child->count_visits_ == 0.0f) { continue; }
 
-    this->value_ = exploitation + exploration;
+      float exploitation = the_child->count_wins_ / the_child->count_visits_;
+
+      float exploration = sqrt(
+        2.0f * log(parent->count_visits_ + 1.0f) / the_child->count_visits_);
+
+      the_child->value_ = exploitation + exploration;
+    }
 
     parent->Backpropagate(winner);
   }
@@ -170,48 +176,6 @@ void ReversiState::Backpropagate(int32_t winner) {
 
 //------------------------------------------------------------------------------
 void ReversiState::Inspect() const {
-  const auto blacks = this->blacks_;
-  const auto whites = this->whites_;
-
-  auto f = 1ull;
-
-  cout << "   0 1 2 3 4 5 6 7 " << endl;
-  cout << "  \u250c\u2500\u252c\u2500\u252c\u2500\u252c\u2500\u252c\u2500\u252c"
-          "\u2500\u252c\u2500\u252c\u2500\u2510" << endl;
-
-  for (auto y = 0; y < 8; ++y) {
-    cout << static_cast<char>('A' + y) << " \u2502";
-
-    for (auto x = 0; x < 8; ++x) {
-      if ((blacks & f) != 0) {
-        cout << "\u25cf\u2502";
-      } else if ((whites & f) != 0) {
-        cout << "\u25cb\u2502";
-      } else {
-        cout << " \u2502";
-      }
-
-      f <<= 1;
-    }
-
-    cout << endl;
-
-    if (y < 7) {
-      cout << "  \u251c\u2500\u253c\u2500\u253c\u2500\u253c\u2500\u253c\u2500"
-              "\u253c\u2500\u253c\u2500\u253c\u2500\u2524" << endl;
-    } else {
-      cout << "  \u2514\u2500\u2534\u2500\u2534\u2500\u2534\u2500\u2534\u2500"
-              "\u2534\u2500\u2534\u2500\u2534\u2500\u2518" << endl;
-    }
-  }
-
-  cout << "  \u25cf: " << this->BlacksCount();
-  cout << "  \u25cb: " << this->WhitesCount();
-  cout << endl;
-}
-
-//------------------------------------------------------------------------------
-void ReversiState::InspectValue() const {
   auto moves = this->EnumValidMoves(this->player_);
 
   sort(
@@ -265,6 +229,11 @@ void ReversiState::InspectValue() const {
   cout << "  \u25cf: " << this->BlacksCount();
   cout << "  \u25cb: " << this->WhitesCount();
   cout << endl;
+}
+
+//------------------------------------------------------------------------------
+void ReversiState::InspectValue() const {
+  this->Inspect();
 
   auto visited_max = max_element(
     this->children_.begin(),
